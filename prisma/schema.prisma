@@ -1,0 +1,650 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model archivo_organigrama {
+  ARC_id             Int       @id @default(autoincrement())
+  ARC_url            String?   @db.VarChar(1000)
+  ARC_tipo           Int?
+  ARC_fecha          DateTime? @db.Date
+  ARC_dep_id         Int?
+  ARC_fecha_duracion DateTime? @db.Date
+  ARC_nombre_mostrar String?   @db.VarChar(255)
+}
+
+model boletin {
+  bol_id      Int       @id @default(autoincrement())
+  bol_fecha   DateTime? @db.Date
+  bol_usuario String?   @db.VarChar(30)
+  bol_ruta    String?   @db.VarChar(255)
+}
+
+model centro {
+  idcentro                          Int     @id
+  rut                               String? @db.Char(13)
+  nombre                            String? @db.VarChar(60)
+  direccion                         String? @db.VarChar(80)
+  establecimiento_idestablecimiento Int?
+  comuna                            String? @db.VarChar(45)
+  telefono                          String? @db.VarChar(20)
+  nombredirector                    String? @db.VarChar(80)
+  glosa_compras                     String? @db.VarChar(255)
+  tipo                              String? @db.Char(1)
+
+  @@index([establecimiento_idestablecimiento], map: "fk_establecimiento_servicio")
+}
+
+model centroresponsabilidad {
+  crCodigo      Int     @id @default(autoincrement())
+  crNombre      String? @db.VarChar(80)
+  crResponsable String? @db.VarChar(20)
+}
+
+model cierresistemas {
+  sistema     String    @id @db.VarChar(10)
+  fechacierre DateTime? @db.Date
+}
+
+model cr {
+  idcr            Int     @id @default(0)
+  nombre          String? @db.VarChar(50)
+  encargadonombre String? @db.VarChar(100)
+  encargadocorreo String? @db.VarChar(30)
+  encargadofono   Int?
+  idcentro        Int?    @default(103)
+  ambito          Int?    @db.TinyInt
+
+  @@index([idcr], map: "ID")
+  @@index([nombre], map: "nombre")
+}
+
+model encuesta {
+  enc_id     Int       @id @default(autoincrement())
+  enc_rut    Int       @default(0)
+  enc_fecha  DateTime? @db.Date
+  enc_unidad String?   @db.VarChar(30)
+  enc_preg1  String?   @db.VarChar(10)
+  enc_preg2  String?   @db.VarChar(10)
+  enc_preg3  String?   @db.VarChar(10)
+  enc_preg4  String?   @db.VarChar(10)
+  enc_preg5  String?   @db.VarChar(10)
+  enc_preg6  String?   @db.VarChar(10)
+  enc_preg7  String?   @db.VarChar(10)
+  enc_preg8  String?   @db.VarChar(10)
+  enc_preg9  String?   @db.VarChar(1000)
+  enc_preg10 String?   @db.VarChar(1000)
+  enc_preg11 String?   @db.VarChar(10)
+  enc_preg12 String?   @db.VarChar(10)
+  enc_preg13 String?   @db.VarChar(10)
+  enc_preg14 String?   @db.VarChar(10)
+  enc_preg15 String?   @db.VarChar(10)
+  enc_preg16 String?   @db.VarChar(10)
+  enc_preg17 String?   @db.VarChar(10)
+  enc_estado String?   @db.VarChar(10)
+  enc_tipo   String?   @db.VarChar(255)
+}
+
+model especialidad {
+  espId           Int     @default(autoincrement())
+  centro_idcentro Int     @default(103)
+  espNombre       String? @db.VarChar(60)
+  espRem04        String? @db.Char(1)
+  espRem07        String? @db.Char(1)
+  espRau          String? @db.Char(1)
+  cr_idcr         Int?
+  espLE           String? @db.Char(1)
+  espPlazoLE      Int?    @db.MediumInt
+  omologacion_esp String? @db.VarChar(50)
+
+  @@id([espId, centro_idcentro])
+}
+
+model establecimiento {
+  idestablecimiento Int     @id
+  nombre            String? @db.VarChar(60)
+  direccion         String? @db.VarChar(80)
+}
+
+model estado_solicitud {
+  id_estado Int     @id @default(0)
+  nombre_es String? @db.VarChar(30)
+
+  @@map("estado solicitud")
+}
+
+model feriados {
+  feriadoFecha DateTime @id @db.Date
+  feriadoGlosa String?  @db.VarChar(50)
+}
+
+model fonasaomega {
+  FOCod               Int     @id @default(autoincrement())
+  FOCodFonasa         String? @db.Char(15)
+  FONombrePrestaOmega String? @db.VarChar(100)
+  FOCodOmega          String? @db.VarChar(15)
+
+  @@index([FOCodFonasa], map: "idx_codfonasa")
+  @@index([FOCodOmega], map: "idx_codomega")
+}
+
+model galeria {
+  gal_id     Int     @id @default(autoincrement())
+  gal_unidad Int?
+  gal_imagen String? @db.VarChar(255)
+}
+
+model historial_orden_trabajo {
+  id_orden         Int       @id @default(autoincrement())
+  id_usuario       String?   @db.VarChar(30)
+  nombreh          String?   @db.VarChar(40)
+  unidad           String?   @db.VarChar(30)
+  tipo_mantencion  Int?
+  observacion      String?   @db.VarChar(50)
+  fecha            DateTime? @db.Date
+  hora             String?   @db.VarChar(5)
+  estado           Int?
+  fecha_visita     DateTime? @db.Date
+  hora_visita      String?   @db.VarChar(5)
+  cargo            String?   @db.VarChar(30)
+  fecha_cierre     DateTime? @db.Date
+  nombre_encargado String?   @db.VarChar(20)
+  espera_motivo    String?   @db.VarChar(20)
+  deriva_motivo    String?   @db.VarChar(30)
+}
+
+model ideas {
+  id_idea    Int       @id @default(autoincrement())
+  fecha_idea DateTime? @db.DateTime(0)
+  msj_idea   String?   @db.VarChar(290)
+  ipEq_idea  String?   @db.VarChar(20)
+  idUsu_idea String?   @db.VarChar(20)
+}
+
+model log_sesion {
+  id_log_secion  Int       @id @default(autoincrement())
+  id_usuario     String?   @db.VarChar(20)
+  nombre_usuario String?   @db.VarChar(40)
+  ip_cliente     String?   @db.VarChar(20)
+  fecha_sesion   DateTime? @db.DateTime(0)
+  idservicio     Int?
+  sesion         String?   @db.Char(2)
+}
+
+model medico {
+  id             Int     @id @default(autoincrement()) @db.SmallInt
+  rut            Int
+  nombremedico   String? @db.VarChar(80)
+  medico         String? @db.VarChar(80)
+  emailmedico    String? @db.VarChar(60)
+  telefonomedico String? @db.VarChar(40)
+  proId          Int?    @db.MediumInt
+  medanatomia    String? @db.Char(1)
+  tipoUrg        Int?
+
+  @@index([id], map: "index_id")
+  @@index([medico], map: "index_medico")
+  @@index([rut], map: "index_rut")
+}
+
+model medico_has_especialidad {
+  id              Int     @db.SmallInt
+  espId           Int
+  centro_idcentro Int     @default(103)
+  mheActivo       String? @db.VarChar(2)
+
+  @@id([id, espId, centro_idcentro])
+}
+
+model medico_has_servicio {
+  id              Int @db.SmallInt
+  idservicio      Int
+  centro_idcentro Int @default(103)
+
+  @@id([id, idservicio, centro_idcentro])
+}
+
+model movimiento_cambio_password {
+  idCambioPassword    BigInt    @id @default(autoincrement())
+  idUsuario           String    @db.VarChar(20)
+  claveAcceso         String    @db.VarChar(255)
+  fechaCambioPassword DateTime? @db.DateTime(0)
+}
+
+model noticias {
+  not_id          Int      @id @default(0)
+  not_titulo      String   @db.VarChar(250)
+  not_resumen     String   @db.VarChar(70)
+  not_fechaActual DateTime @db.Date
+  not_autor       String   @db.VarChar(20)
+  not_cr          String   @db.VarChar(150)
+  not_foto        String   @db.VarChar(150)
+  not_cuerpoNot   String   @db.VarChar(15000)
+}
+
+model organigrama {
+  dep_id              Int     @id
+  dep_nombre          String? @db.VarChar(1000)
+  dep_nombre_mostrar  String? @db.VarChar(1000)
+  dep_depende_de      Int?
+  dep_clave_of_partes Int?
+  dep_tipo            Int?
+  dep_historico       Int?
+  cod_organigrama     Int?
+  dep_mostrar_este    String? @db.VarChar(1000)
+
+  @@index([cod_organigrama], map: "cod_organigrama")
+}
+
+model organigrama_old {
+  dep_id              Int     @id
+  dep_nombre          String? @db.MediumText
+  dep_nombre_mostrar  String? @db.MediumText
+  dep_depende_de      Int?
+  dep_clave_of_partes Int?
+  dep_tipo            Int?
+  dep_historico       Int?
+  cod_organigrama     Int?
+}
+
+model orientaciones_institucionales {
+  ori_id      Int       @id @default(autoincrement())
+  ori_fecha   DateTime? @db.Date
+  ori_usuario String?   @db.VarChar(30)
+  ori_ruta    String?   @db.VarChar(255)
+}
+
+model patologiasges {
+  patCod    BigInt  @id @default(0)
+  patNombre String? @db.VarChar(80)
+}
+
+model perfil {
+  id_perfil     Int     @id @default(autoincrement())
+  perfil_nombre String? @db.VarChar(255)
+}
+
+model perfil_has_rol {
+  id_perfil Int @default(0)
+  id_rol    Int @default(0)
+
+  @@id([id_perfil, id_rol])
+}
+
+model pizarra {
+  piz_id       Int      @id
+  piz_titulo   String   @db.VarChar(150)
+  piz_fecha    DateTime @db.Date
+  piz_autor    String   @db.VarChar(150)
+  piz_cr       String   @db.VarChar(150)
+  piz_duracion DateTime @db.Date
+  piz_cargo    String   @db.VarChar(150)
+  piz_aviso    String   @db.VarChar(1725)
+  piz_archivo  String?  @db.VarChar(150)
+  piz_archivo2 String?  @db.VarChar(150)
+  piz_archivo3 String?  @db.VarChar(150)
+  piz_seccion  String?  @db.VarChar(20)
+}
+
+model ppvcompromisos {
+  progCod     BigInt
+  subprogCod  BigInt
+  compromiso  BigInt
+  descripcion String?   @db.VarChar(100)
+  valor       Int?
+  cantidad    Int?
+  fecha       DateTime? @db.Date
+  centroresp  Int?
+
+  @@id([progCod, subprogCod, compromiso])
+}
+
+model ppvprestaciones {
+  progCod       BigInt
+  subprogCod    BigInt
+  compromiso    BigInt
+  prestacion    String  @db.Char(15)
+  nomPrestacion String? @db.VarChar(80)
+  idServicio    Int?
+  idServicio2   Int?
+  edadinicial   Int?
+  edadfinal     Int?
+  sexo          String? @db.Char(1)
+  frecuencia    Int?
+  tiempo        String? @db.Char(1)
+  excluyentes   String? @db.VarChar(255)
+
+  @@id([progCod, subprogCod, prestacion, compromiso])
+}
+
+model ppvprogramas {
+  progCod         BigInt  @id @default(autoincrement())
+  progDescripcion String? @db.VarChar(100)
+}
+
+model ppvsubprogramas {
+  progCod            BigInt  @default(0)
+  subprogCod         BigInt
+  subprogNombre      String? @db.VarChar(100)
+  subprogResponsable String? @db.VarChar(100)
+  subprogPediatrica  Int?
+
+  @@id([progCod, subprogCod])
+}
+
+model ppvtransplantes {
+  correlativo Int     @id @default(autoincrement())
+  rut         Int?
+  protocolo   String? @db.Char(2)
+  organo      String? @db.Char(10)
+  esges       String? @db.Char(1)
+  producto    String? @db.Char(15)
+  prestacion  String? @db.Char(15)
+}
+
+model prestacion_has_servicio {
+  progCod    BigInt @default(0)
+  subprogCod BigInt @default(0)
+  compromiso BigInt @default(0)
+  prestacion String @default("") @db.Char(15)
+  idServicio Int    @default(0)
+
+  @@id([progCod, subprogCod, compromiso, prestacion, idServicio])
+}
+
+model programas {
+  progId   Int     @id @default(autoincrement()) @db.SmallInt
+  progdesc String? @db.VarChar(40)
+}
+
+model reporte_has_usuario {
+  usuario   String @default("") @db.VarChar(255)
+  REPcodigo Int    @default(0)
+
+  @@id([usuario, REPcodigo])
+}
+
+model reportes {
+  REPcodigo      Int     @id @default(0)
+  REPnombre      String? @db.VarChar(200)
+  REPdescripcion String? @db.VarChar(200)
+  REPestado      String? @db.Char(1)
+}
+
+model rol {
+  idrol          Int     @id @default(autoincrement())
+  descripcion    String? @db.VarChar(80)
+  tipoaplicacion String? @db.Char(1)
+  ruta           String? @db.VarChar(200)
+  nombremenu     String? @db.VarChar(100)
+  icono          String? @db.VarChar(200)
+  activo         String? @default("N") @db.Char(1)
+}
+
+model rol_copy {
+  idrol          Int     @id
+  descripcion    String? @db.VarChar(80)
+  tipoaplicacion String? @db.Char(1)
+  ruta           String? @db.VarChar(200)
+  nombremenu     String? @db.VarChar(100)
+  icono          String? @db.VarChar(200)
+}
+
+model servicio {
+  idservicio           Int
+  id                   Int?
+  id_serviciobiopsia   Int?
+  id_le_camas          Int?
+  camaSN               String?   @db.Char(1)
+  nombre               String?   @db.VarChar(60)
+  emailsecretaria      String?   @db.VarChar(60)
+  emailjefatura        String?   @db.VarChar(60)
+  centro_idcentro      Int       @default(0)
+  cr_idcr              Int?
+  estado               String?   @db.Char(1)
+  sscc                 Int?      @default(0) @db.TinyInt
+  cr_tipo_logistica    Int?      @db.TinyInt
+  rem07                String?   @default("N") @db.Char(1)
+  rem04                String?   @db.Char(1)
+  pabellon             String?   @default("N") @db.Char(1)
+  farmacia             String?   @db.Char(1)
+  farAbierta           String?   @db.Char(1)
+  NombreAbre           String?   @db.VarChar(10)
+  emedicos             String?   @db.Char(1)
+  emedicosfecha        DateTime? @db.Date
+  serviAnatomia        String?   @db.Char(1)
+  controlados          String?   @db.Char(1)
+  rayos                String?   @db.Char(1)
+  id_omega             String?   @db.VarChar(5)
+  filtroEsterilizacion String?   @db.Char(1)
+  Rpretaciones         String?   @db.Char(1)
+  servinombreAbre      String?   @db.Char(10)
+  TipoServicio         String?   @db.Char(3)
+  far                  Int?
+  camas                String?   @db.Char(1)
+
+  @@id([idservicio, centro_idcentro])
+  @@index([idservicio], map: "ID")
+  @@index([cr_idcr], map: "IDCR")
+}
+
+model servicio_ {
+  idservicio           Int
+  id                   Int?
+  id_serviciobiopsia   Int?
+  id_le_camas          Int?
+  camaSN               String?   @db.Char(1)
+  nombre               String?   @db.VarChar(60)
+  emailsecretaria      String?   @db.VarChar(60)
+  emailjefatura        String?   @db.VarChar(60)
+  centro_idcentro      Int       @default(0)
+  cr_idcr              Int?
+  sscc                 Int?      @default(0) @db.TinyInt
+  cr_tipo_logistica    Int?      @db.TinyInt
+  rem07                String?   @default("N") @db.Char(1)
+  rem04                String?   @db.Char(1)
+  pabellon             String?   @default("N") @db.Char(1)
+  farmacia             String?   @db.Char(1)
+  farAbierta           String?   @db.Char(1)
+  NombreAbre           String?   @db.VarChar(10)
+  emedicos             String?   @db.Char(1)
+  emedicosfecha        DateTime? @db.Date
+  serviAnatomia        String?   @db.Char(1)
+  controlados          String?   @db.Char(1)
+  rayos                String?   @db.Char(1)
+  id_omega             String?   @db.VarChar(5)
+  filtroEsterilizacion String?   @db.Char(1)
+  Rpretaciones         String?   @db.Char(1)
+  servinombreAbre      String?   @db.Char(10)
+  TipoServicio         String?   @db.Char(3)
+  far                  Int?
+  ser_esterilizacion   String?   @db.VarChar(1)
+
+  @@id([idservicio, centro_idcentro])
+  @@index([idservicio], map: "ID")
+  @@index([cr_idcr], map: "IDCR")
+}
+
+model servicio_copy {
+  idservicio           Int
+  id                   Int?
+  id_serviciobiopsia   Int?
+  id_le_camas          Int?
+  camaSN               String?   @db.Char(1)
+  nombre               String?   @db.VarChar(60)
+  emailsecretaria      String?   @db.VarChar(60)
+  emailjefatura        String?   @db.VarChar(60)
+  centro_idcentro      Int       @default(0)
+  cr_idcr              Int?
+  sscc                 Int?      @default(0) @db.TinyInt
+  cr_tipo_logistica    Int?      @db.TinyInt
+  rem07                String?   @default("N") @db.Char(1)
+  rem04                String?   @db.Char(1)
+  pabellon             String?   @default("N") @db.Char(1)
+  farmacia             String?   @db.Char(1)
+  farAbierta           String?   @db.Char(1)
+  NombreAbre           String?   @db.VarChar(10)
+  emedicos             String?   @db.Char(1)
+  emedicosfecha        DateTime? @db.Date
+  serviAnatomia        String?   @db.Char(1)
+  controlados          String?   @db.Char(1)
+  rayos                String?   @db.Char(1)
+  id_omega             String?   @db.VarChar(5)
+  filtroEsterilizacion String?   @db.Char(1)
+  Rpretaciones         String?   @db.Char(1)
+  servinombreAbre      String?   @db.Char(10)
+  TipoServicio         String?   @db.Char(3)
+  far                  Int?
+  NombreRecNet         String?   @db.VarChar(60)
+
+  @@id([idservicio, centro_idcentro])
+  @@index([idservicio], map: "ID")
+  @@index([cr_idcr], map: "IDCR")
+}
+
+model servicio_copy1 {
+  idservicio           Int
+  id                   Int?
+  id_serviciobiopsia   Int?
+  id_le_camas          Int?
+  camaSN               String?   @db.Char(1)
+  nombre               String?   @db.VarChar(60)
+  emailsecretaria      String?   @db.VarChar(60)
+  emailjefatura        String?   @db.VarChar(60)
+  centro_idcentro      Int       @default(0)
+  cr_idcr              Int?
+  estado               String?   @default("N") @db.Char(1)
+  sscc                 Int?      @default(0) @db.TinyInt
+  cr_tipo_logistica    Int?      @db.TinyInt
+  rem07                String?   @default("N") @db.Char(1)
+  rem04                String?   @db.Char(1)
+  pabellon             String?   @default("N") @db.Char(1)
+  farmacia             String?   @db.Char(1)
+  farAbierta           String?   @db.Char(1)
+  NombreAbre           String?   @db.VarChar(10)
+  emedicos             String?   @db.Char(1)
+  emedicosfecha        DateTime? @db.Date
+  serviAnatomia        String?   @db.Char(1)
+  controlados          String?   @db.Char(1)
+  rayos                String?   @db.Char(1)
+  id_omega             String?   @db.VarChar(5)
+  filtroEsterilizacion String?   @db.Char(1)
+  Rpretaciones         String?   @db.Char(1)
+  servinombreAbre      String?   @db.Char(10)
+  TipoServicio         String?   @db.Char(3)
+  far                  Int?
+
+  @@id([idservicio, centro_idcentro])
+  @@index([idservicio], map: "ID")
+  @@index([cr_idcr], map: "IDCR")
+}
+
+model unidad {
+  idservicio Int     @id
+  nombre     String? @db.VarChar(60)
+  sscc       Int?    @default(0) @db.TinyInt
+  bodega     String? @db.Char(4)
+  id         Int?
+  pabellon   String? @default("N") @db.Char(1)
+  deis       Int?
+  quirurgico String? @db.Char(1)
+
+  @@index([nombre], map: "IServiNombre")
+  @@index([idservicio, pabellon], map: "Iunidad1")
+}
+
+model usuario {
+  idusuario                   String    @id @default("") @db.VarChar(20)
+  nombreusuario               String?   @db.VarChar(80)
+  claveacceso                 String?   @db.VarChar(255)
+  servicio_idservicio         Int?
+  emailusuario                String?   @db.VarChar(60)
+  rutusuario                  Int?      @default(0)
+  clavewin                    String?   @db.VarChar(255)
+  key                         String?   @db.VarChar(255)
+  usuarCajaCod                String?   @db.VarChar(20)
+  final                       String?   @db.Char(1)
+  usu_direccion               String?   @db.VarChar(200)
+  usu_fono                    Int?
+  usu_celular                 Int?
+  AGE_tipo_impresion          String?   @default("NOR") @db.Char(3)
+  usu_abreviacion             String?   @db.VarChar(50)
+  usu_activo                  Int?
+  usu_fecha_nac               DateTime? @db.Date
+  CFCdespachoExterno          String?   @default("N") @db.Char(1)
+  usu_barcode_key             String?   @db.VarChar(255)
+  usu_conf_urgencia           String?   @db.Char(3)
+  pin                         String?   @db.VarChar(255)
+  usu_valida_correo           Int?      @default(0) @db.SmallInt
+  fechaCaducidadPassword      DateTime? @db.Date
+  fechaCaducidadCuenta        DateTime? @db.Date
+  id_procedencia              Int?
+  id_centro                   Int?
+  acceso_externo_activo       String?   @db.Char(1)
+  acceso_externo_ip_bloqueo   String?   @db.Char(100)
+  acceso_externo_date_bloqueo DateTime? @db.DateTime(0)
+
+  @@index([servicio_idservicio], map: "fk_usuario_servicio")
+  @@index([idusuario], map: "idusuario")
+  @@index([rutusuario], map: "rutusuario")
+}
+
+model usuario_has_establecimiento {
+  idusuario  String  @db.VarChar(20)
+  ESTAcodigo Int     @db.MediumInt
+  ESTAactivo String? @db.Char(1)
+
+  @@id([idusuario, ESTAcodigo])
+}
+
+model usuario_has_local {
+  idusuario String @default("") @db.VarChar(20)
+  LOCcodigo Int    @default(0) @db.SmallInt
+
+  @@id([idusuario, LOCcodigo])
+}
+
+model usuario_has_log {
+  id        BigInt    @id @default(autoincrement())
+  idusuario String?   @db.VarChar(20)
+  fecha     DateTime? @db.DateTime(0)
+  idrau     Int?
+  actividad String?   @db.VarChar(255)
+}
+
+model usuario_has_perfil {
+  id_perfil Int    @default(0)
+  idusuario String @default("") @db.VarChar(50)
+
+  @@id([id_perfil, idusuario])
+}
+
+model usuario_has_rol {
+  usuario_idusuario String @db.VarChar(20)
+  rol_idrol         Int
+
+  @@id([usuario_idusuario, rol_idrol])
+  @@unique([usuario_idusuario, rol_idrol], map: "id_usuario_rol")
+  @@index([rol_idrol], map: "fk_usuario_has_rol_rol")
+  @@index([usuario_idusuario], map: "fk_usuario_has_rol_usuario")
+}
+
+model usuario_has_servicio {
+  idusuario       String                             @db.VarChar(20)
+  idservicio      Int
+  estado          String?                            @db.Char(1)
+  centro_idcentro Int
+  pertenece       String?                            @db.Char(1)
+  entregaturno    usuario_has_servicio_entregaturno?
+
+  @@id([idusuario, idservicio, centro_idcentro])
+}
+
+enum usuario_has_servicio_entregaturno {
+  S
+  N
+}
