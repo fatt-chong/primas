@@ -22,21 +22,7 @@ app.get("/", async(req, res)=>{
     res.json(resp);
 });
 
-app.get("/paciente", async(req, res)=>{
-    // const resp = await prisma.post.findMany({
-    //     skip: 6,
-    //     take: 3,
-    //   });
-    // const resp = await prisma.usuario.count();
-    const resp = await prisma.paciente.findMany({
-        select : {
-            id : true,
-            rut : true
-        }
-    });
 
-    res.json(resp);
-});
 
 app.get("/rut/:rut", async(req, res)=>{
     const {rut} = req.params;
@@ -84,7 +70,16 @@ app.get("/paginador/usuarios/:offset/:limit", async(req, res)=>{
     res.json(usuarios);
 });
 
-app.get("/paginador/usuarios/rut/:rut/nombre/:nombre/offset/:offset/limit/:limit", async(req, res)=>{
+const test = (req, res, next) => {
+    // res.json("wena");
+    if(req.headers.authorization == "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjozLCJub21icmUiOiJmYXR0MyIsImFwZWxsaWRvIjoiY2hvbmciLCJlZGFkIjozMCwiY2VsdWxhciI6Ijk1MDU5NDU5IiwiY29ycmVvIjoiZmF0dDNAZ21haWwuY29tIiwiY29udHJhc2VuYSI6IjEyMzQ1Njc4In0sImlhdCI6MTY0NTA0MDQzNCwiZXhwIjoxNjQ1MDc2NDM0fQ.YSsn9UrzgVu4Lwy9Wa14aBQE2ACrXM1qrx6oYot6Jmo"){
+        return next();
+    }
+    res.json("error de middleware test");
+}
+
+app.get("/paginador/usuarios/rut/:rut/nombre/:nombre/offset/:offset/limit/:limit", test, async(req, res)=>{
+    
     const {offset, limit, nombre, rut} = req.params;
     const total = await prisma.usuario.count({
         where: {
