@@ -121,7 +121,7 @@ app.get("/paginador/usuarios/rut/:rut/nombre/:nombre/offset/:offset/limit/:limit
             usuarios: resp
         }
     ];
-
+//
     res.json(usuarios);
 });
 
